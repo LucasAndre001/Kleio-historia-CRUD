@@ -1,0 +1,22 @@
+:root {
+  --cor-primaria: #7a3b24;
+  --cor-primaria-escura: #5c2c1a;
+  --cor-fundo: #f5e6d3;
+  --cor-fundo-claro: #fff5eb;
+  --cor-nav: #c9a583;
+  --cor-bege: #d9c0a8;
+  --cor-texto-claro: #f8e8d8;
+  --cor-texto-escuro: #2b1810;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--cor-fundo);
+  color: var(--cor-texto-escuro);
+}
+
+h1, h2, h3 { font-variant: small-caps; }
+a { cursor: pointer; }

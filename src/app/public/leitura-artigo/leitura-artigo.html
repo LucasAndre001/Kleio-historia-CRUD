@@ -1,0 +1,25 @@
+<app-header />
+
+<main class="pagina">
+  @if (artigo(); as a) {
+    <aside class="sumario">
+      <h4>Sumário</h4>
+      @for (titulo of sumario(); track $index; let i = $index) {
+        <a [class.ativo]="i === capituloAtivo()" (click)="irParaCapitulo(i)">{{ titulo }}</a>
+      }
+    </aside>
+
+    <article class="conteudo">
+      <h1>{{ a.titulo }}</h1>
+      <span class="categoria">{{ a.categoria }}</span>
+      <!-- [innerHTML] injeta HTML; o Angular sanitiza automaticamente (remove <script>, etc.) -->
+      <div #corpo class="corpo" [innerHTML]="a.conteudoHtml"></div>
+    </article>
+  } @else if (carregado()) {
+    <p class="aviso">Artigo não encontrado. <a routerLink="/">Voltar</a></p>
+  } @else {
+    <p class="aviso">Carregando...</p>
+  }
+</main>
+
+<app-footer />

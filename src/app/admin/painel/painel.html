@@ -1,0 +1,114 @@
+<header class="topo">
+  <span><strong>Kleio História</strong> • Painel administrativo</span>
+  <a (click)="sair()">⟵ Sair</a>
+</header>
+
+<main>
+  <div class="acoes-topo">
+    <button class="importar" disabled title="Será implementado junto com o back-end">
+      📄 Importar PDF<br /><small>Extrai o texto para o editor</small>
+    </button>
+    <button class="novo" (click)="novo()">✎ Nova publicação manual</button>
+  </div>
+
+  <h2>Editor de artigo {{ editandoId() ? '(editando #' + editandoId() + ')' : '(novo)' }}</h2>
+  <section class="editor">
+    <form [formGroup]="form">
+      <label for="titulo">Título do artigo</label>
+      <input id="titulo" formControlName="titulo" />
+
+      <div class="linha">
+        <div>
+          <label for="categoria">Categoria / tema</label>
+          <input id="categoria" formControlName="categoria" />
+        </div>
+        <div>
+          <label for="capa">Imagem de capa (URL)</label>
+          <div class="capa">
+            @if (form.controls.imagemCapa.value) {
+              <img [src]="form.controls.imagemCapa.value" alt="Capa" />
+            }
+            <input id="capa" formControlName="imagemCapa" />
+          </div>
+        </div>
+      </div>
+
+      <div class="barra">
+        <button type="button" (click)="formatar('b', area)"><b>B</b></button>
+        <button type="button" (click)="formatar('i', area)"><i>I</i></button>
+        <button type="button" (click)="formatar('h2', area)">H1</button>
+        <button type="button" (click)="inserirImagem()">🖼</button>
+        <button type="button" (click)="inserirLink()">🔗</button>
+      </div>
+      <!-- #area é uma template reference variable: dá acesso ao elemento no próprio HTML -->
+      <textarea #area rows="10" formControlName="conteudoHtml"
+        placeholder="Use &lt;h2&gt; para criar capítulos (eles viram o sumário)"></textarea>
+    </form>
+
+    @if (form.touched && form.invalid) {
+      <small class="erro">Preencha título, categoria e conteúdo.</small>
+    }
+    @if (mensagem()) {
+      <small class="ok">{{ mensagem() }}</small>
+    }
+
+    <div class="acoes-editor">
+      @if (editandoId(); as id) {
+        <a class="excluir" (click)="excluir(id)">🗑 Excluir artigo</a>
+      } @else {
+        <span></span>
+      }
+      <div>
+        <button class="rascunho" (click)="salvarRascunho()">Salvar rascunho</button>
+        <button class="publicar" (click)="publicar()">➤ Publicar</button>
+      </div>
+    </div>
+  </section>
+
+  <h2>Artigos cadastrados ({{ artigos().length }})</h2>
+  <section class="lista">
+    @for (a of artigos(); track a.id) {
+      <div class="item">
+        <img [src]="a.imagemCapa" alt="" />
+        <div class="info">
+          <strong>{{ a.titulo }}</strong>
+          @if (a.status === 'publicado') {
+            <small>publicado em {{ a.dataPublicacao | date: 'dd/MM/yyyy' }}</small>
+          } @else {
+            <small>rascunho salvo em {{ a.dataRascunho | date: 'dd/MM/yyyy' }}</small>
+          }
+        </div>
+
+        @if (a.status === 'publicado') {
+          <label class="destaque">
+            <input type="checkbox" [checked]="a.destaque" (change)="alternarDestaque(a)" /> Destaque
+          </label>
+        }
+        <span class="badge" [class.pub]="a.status === 'publicado'">{{ a.status }}</span>
+        @if (a.status === 'publicado') {
+          <a class="ver" [routerLink]="['/artigo', a.id]" target="_blank">Ver no site ↗</a>
+        }
+        <button (click)="editar(a)" aria-label="Editar">✎</button>
+        <button (click)="excluir(a.id)" aria-label="Excluir">🗑</button>
+      </div>
+    }
+  </section>
+
+  <h2>Sugestões recebidas ({{ sugestoes().length }})</h2>
+  <section class="lista sugestoes">
+    @for (s of sugestoes(); track s.id) {
+      <div class="sug">
+        <div class="info">
+          <strong>{{ s.tema }}</strong>
+          <small>{{ s.nome }} • {{ s.email }} • {{ s.dataEnvio | date: 'dd/MM/yyyy HH:mm' }}</small>
+          <p>{{ s.mensagem }}</p>
+        </div>
+        <button (click)="excluirSugestao(s.id)" aria-label="Excluir sugestão">🗑</button>
+      </div>
+    } @empty {
+      <p class="vazio">Nenhuma sugestão recebida ainda.</p>
+    }
+  </section>
+</main>
+
+<footer>© Kleio História - Todos os direitos reservados</footer>

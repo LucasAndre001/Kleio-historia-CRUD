@@ -1,0 +1,78 @@
+<div id="topo"></div>
+<app-header />
+
+@if (destaques().length > 0) {
+  @let d = destaques()[slideAtual()];
+  <section class="carrossel">
+    <img [src]="d.imagemCapa" [alt]="d.titulo" />
+    <button class="seta esq" (click)="anterior()" aria-label="Anterior">‹</button>
+    <button class="seta dir" (click)="proximo()" aria-label="Próximo">›</button>
+
+    <div class="info">
+      <span>Artigos em destaque</span>
+      <h3>{{ d.titulo }}</h3>
+      <p>{{ d.categoria }}</p>
+      <a class="btn" [routerLink]="['/artigo', d.id]">Leia sobre</a>
+    </div>
+
+    <div class="bolinhas">
+      @for (item of destaques(); track item.id; let i = $index) {
+        <button [class.ativa]="i === slideAtual()" (click)="irPara(i)" [attr.aria-label]="'Slide ' + (i + 1)"></button>
+      }
+    </div>
+  </section>
+}
+
+<section id="artigos" class="artigos">
+  <h2>Artigos</h2>
+  <div class="grade">
+    @for (a of artigos(); track a.id) {
+      <article class="card">
+        <img [src]="a.imagemCapa" [alt]="a.titulo" />
+        <div class="rodape">
+          <strong>{{ a.titulo }}</strong>
+          <a class="btn" [routerLink]="['/artigo', a.id]">Leia sobre</a>
+        </div>
+      </article>
+    } @empty {
+      <p>Carregando artigos...</p>
+    }
+  </div>
+</section>
+
+<section id="sugestao" class="sugestao">
+  <h2>Sugestão</h2>
+  <p>Não encontrou o que procurava? Nos envie sua sugestão de tema!</p>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()">
+    <label for="nome">Nome:</label>
+    <input id="nome" formControlName="nome" />
+
+    <label for="email">Email:</label>
+    <input id="email" type="email" formControlName="email" />
+
+    <label for="tema">Tema:</label>
+    <input id="tema" formControlName="tema" />
+
+    <label for="mensagem">Mensagem:</label>
+    <textarea id="mensagem" rows="4" formControlName="mensagem"></textarea>
+
+    @if (form.touched && form.invalid) {
+      <small class="erro">Preencha todos os campos (e-mail válido).</small>
+    }
+    <button type="submit">Enviar</button>
+    @if (enviado()) {
+      <small class="ok">Sugestão enviada com sucesso!</small>
+    }
+  </form>
+</section>
+
+<section id="sobre" class="sobre">
+  <div class="texto">
+    <h2>Sobre</h2>
+    <p>Texto sobre a criação do sistema. Texto sobre a criação do sistema. Texto sobre a criação do sistema.</p>
+    <p>Texto sobre a criação do sistema. Texto sobre a criação do sistema. Texto sobre a criação do sistema.</p>
+  </div>
+</section>
+
+<app-footer />
